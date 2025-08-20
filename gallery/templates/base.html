@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Photo Gallery{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gallery-dark': '#1a1a1a',
+                        'gallery-charcoal': '#2d2d2d',
+                        'gallery-stone': '#f8f9fa',
+                        'gallery-accent': '#d4af37',
+                        'gallery-muted': '#6b7280'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gallery-stone to-white text-gallery-dark">
+    <!-- Fixed Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-gallery-dark/95 backdrop-blur-sm border-b border-gallery-accent/20">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-camera-retro text-gallery-accent text-2xl"></i>
+                    <h1 class="text-white text-xl font-light tracking-wider">GALLERY</h1>
+                </div>
+                <p class="text-gallery-accent text-sm font-light hidden sm:block">
+                    Explore, upload, and share your memories with the world
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-16 min-h-screen">
+        <div class="container mx-auto px-4 py-8">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- Fixed Footer -->
+    <footer class="fixed bottom-0 left-0 right-0 bg-gallery-dark/95 backdrop-blur-sm border-t border-gallery-accent/20">
+        <div class="container mx-auto px-4 py-3">
+            <p class="text-gallery-accent text-xs text-center font-light">
+                &copy; 2024 Photo Gallery by FA22-BSE-027. All rights reserved.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

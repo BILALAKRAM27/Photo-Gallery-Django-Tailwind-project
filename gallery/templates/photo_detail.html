@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Photo Detail</title>
+</head>
+<body>
+    <h1>{{ photo.title }}</h1>
+    <img src="data:image/jpeg;base64,{{ photo.image_data }}" alt="{{ photo.title }}">
+
+    <h3>Description: {{ photo.description }}</h3>
+    <p><strong>Uploaded by:</strong> {{ photo.user.username }} on {{ photo.uploaded_at }}</p>
+    <p><strong>Public:</strong> {% if photo.public %} Yes {% else %} No {% endif %}</p>
+
+    <hr>
+
+    <h2>Comments</h2>
+    <div>
+        {% for comment in comments %}
+            <div>
+                <strong>{{ comment.user.username }}</strong> commented on {{ comment.created_at }}:
+                <p>{{ comment.text }}</p>
+            </div>
+            <hr>
+        {% empty %}
+            <p>No comments yet.</p>
+        {% endfor %}
+    </div>
+
+    <h3>Add a Comment</h3>
+    <form method="POST">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit">Post Comment</button>
+    </form>
+    <a href="{% url 'private_gallery' %}">Back to Gallery</a>
+</body>
+</html>

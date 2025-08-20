@@ -1,0 +1,208 @@
+{% extends 'base.html' %}
+
+<html>
+<head>
+    <title>Public Gallery</title>
+</head>
+<body>
+    {% block title %}Public Gallery - Photo Gallery{% endblock %}
+
+    {% block content %}
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-light text-gallery-dark mb-4 tracking-wide">
+                Public Gallery
+            </h1>
+            <div class="w-24 h-px bg-gallery-accent mx-auto mb-8"></div>
+            <a href="{% url 'dashboard' %}" 
+               class="inline-flex items-center px-6 py-3 bg-gallery-dark text-white hover:bg-gallery-charcoal transition-all duration-300 rounded-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Dashboard
+            </a>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {% for photo in photos %}
+                <div class="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden group">
+                    <!-- Image Container -->
+                    <div class="relative overflow-hidden bg-gray-100">
+                        <img src="data:image/jpeg;base64,{{ photo.image_data }}" 
+                             alt="{{ photo.title }}" 
+                             class="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
+                        <div class="absolute inset-0 bg-gallery-dark opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <h3 class="text-xl font-medium text-gallery-dark mb-2 group-hover:text-gallery-accent transition-colors duration-300">
+                                {{ photo.title }}
+                            </h3>
+                            <p class="text-gallery-muted text-sm leading-relaxed">
+                                {{ photo.description }}
+                            </p>
+                        </div>
+
+                        <!-- Upload Info -->
+                        <div class="flex items-center space-x-2 text-xs text-gallery-muted border-t pt-4">
+                            <i class="fas fa-user"></i>
+                            <span>{{ photo.user.username }}</span>
+                            <span>•</span>
+                            <i class="fas fa-calendar-alt"></i>
+                            <span>{{ photo.uploaded_at|date:"M d, Y" }}</span>
+                        </div>
+
+                        <!-- Likes Section -->
+                        <div class="flex items-center justify-between pt-4 border-t">
+                            <button class="like-button flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gallery-accent focus:ring-opacity-50"
+                                    data-photo-id="{{ photo.id }}">
+                                {% if request.user in photo.likes.all %}
+                                    <i class="fas fa-heart text-red-500"></i>
+                                    <span class="text-red-500 font-medium text-sm">Unlike</span>
+                                {% else %}
+                                    <i class="far fa-heart text-gallery-muted hover:text-red-500"></i>
+                                    <span class="text-gallery-muted hover:text-red-500 font-medium text-sm">Like</span>
+                                {% endif %}
+                            </button>
+                            <span class="like-count text-gallery-muted text-sm font-medium">
+                                {{ photo.likes.count }} {% if photo.likes.count == 1 %}Like{% else %}Likes{% endif %}
+                            </span>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="comments space-y-4 pt-4 border-t">
+                            <h4 class="flex items-center text-gallery-dark font-medium text-sm">
+                                <i class="fas fa-comments mr-2"></i>
+                                Comments
+                            </h4>
+                            
+                            <!-- Comments List -->
+                            <ul id="comments-list-{{ photo.id }}" class="space-y-3 max-h-40 overflow-y-auto">
+                                {% for comment in photo.comments.all %}
+                                    <li class="bg-gray-50 rounded-lg p-3">
+                                        <div class="flex items-start space-x-3">
+                                            <div class="w-8 h-8 bg-gallery-accent rounded-full flex items-center justify-center text-white text-xs font-medium">
+                                                {{ comment.user.username|slice:":1"|upper }}
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="text-sm font-medium text-gallery-dark">{{ comment.user.username }}</p>
+                                                <p class="text-sm text-gallery-muted mt-1">{{ comment.body }}</p>
+                                                <p class="text-xs text-gallery-muted mt-2">{{ comment.created|date:"M d, Y - g:i A" }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% empty %}
+                                    <li class="text-gallery-muted text-sm italic text-center py-4">
+                                        No comments yet. Be the first to comment!
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                            <!-- Comment Form -->
+                            <form id="comment-form-{{ photo.id }}" class="comment-form space-y-3" method="post" action="{% url 'comment' photo.id %}">
+                                {% csrf_token %}
+                                <textarea name="body" rows="3" placeholder="Share your thoughts..."
+                                          class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gallery-accent focus:border-transparent resize-none transition-all duration-300 text-sm"></textarea>
+                                <button type="submit" 
+                                        class="w-full bg-gallery-accent text-white py-2 rounded-lg hover:bg-yellow-600 transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gallery-accent focus:ring-opacity-50 text-sm font-medium">
+                                    <i class="fas fa-paper-plane mr-2"></i>
+                                    Post Comment
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <script>
+            document.querySelectorAll('.comment-form').forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const photoId = form.id.split('-')[2];
+                    const body = form.querySelector('textarea').value;
+
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: new URLSearchParams({
+                            'body': body,
+                        }),
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.comment_user) {
+                            const commentList = document.querySelector(`#comments-list-${photoId}`);
+                            const commentItem = document.createElement('li');
+                            commentItem.className = 'bg-gray-50 rounded-lg p-3';
+                            commentItem.innerHTML = `
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-8 h-8 bg-gallery-accent rounded-full flex items-center justify-center text-white text-xs font-medium">
+                                        ${data.comment_user.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gallery-dark">${data.comment_user}</p>
+                                        <p class="text-sm text-gallery-muted mt-1">${data.comment_body}</p>
+                                        <p class="text-xs text-gallery-muted mt-2">${data.comment_created}</p>
+                                    </div>
+                                </div>
+                            `;
+                            commentList.appendChild(commentItem);
+                            form.querySelector('textarea').value = '';
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+        </script>
+
+        <script>
+            document.querySelectorAll('.like-button').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const photoId = button.getAttribute('data-photo-id');
+                    
+                    if (!photoId) {
+                        console.error('Photo ID is missing');
+                        return;
+                    }
+
+                    const likeUrl = "{% url 'like_photo' photo_id=0 %}".replace('0', photoId);
+
+                    fetch(likeUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const icon = button.querySelector('i');
+                        const text = button.querySelector('span');
+                        
+                        if (data.liked) {
+                            icon.className = 'fas fa-heart text-red-500';
+                            text.textContent = 'Unlike';
+                            text.className = 'text-red-500 font-medium text-sm';
+                        } else {
+                            icon.className = 'far fa-heart text-gallery-muted hover:text-red-500';
+                            text.textContent = 'Like';
+                            text.className = 'text-gallery-muted hover:text-red-500 font-medium text-sm';
+                        }
+
+                        button.nextElementSibling.textContent = `${data.like_count} ${data.like_count == 1 ? 'Like' : 'Likes'}`;
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
+        </script>
+        
+    {% endblock %}
+</body>
+</html>

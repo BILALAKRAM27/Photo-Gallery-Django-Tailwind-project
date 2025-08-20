@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Private Gallery</title>
+</head>
+<body>
+    {% block title %}Private Gallery - Photo Gallery{% endblock %}
+
+    {% block content %}
+        <!-- Header Section -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-light text-gallery-dark mb-4 tracking-wide">
+                Private Gallery
+            </h1>
+            <div class="w-24 h-px bg-gallery-accent mx-auto mb-8"></div>
+            <a href="{% url 'dashboard' %}" 
+               class="inline-flex items-center px-6 py-3 bg-gallery-dark text-white hover:bg-gallery-charcoal transition-all duration-300 rounded-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Dashboard
+            </a>
+        </div>
+
+        {% if photos %}
+            <!-- Gallery Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                {% for photo in photos %}
+                    <div class="bg-white rounded-lg shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden group">
+                        <!-- Image Container -->
+                        <div class="relative overflow-hidden bg-gray-100">
+                            {% if photo.image_data %}
+                                <img src="data:image/jpeg;base64,{{ photo.image_data }}" 
+                                     alt="{{ photo.title }}" 
+                                     class="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105" />
+                                <div class="absolute inset-0 bg-gallery-dark opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                                
+                                <!-- Delete Button Overlay -->
+                                <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <a href="{% url 'delete_photo' photo.id %}" 
+                                       class="flex items-center justify-center w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transform hover:scale-110 transition-all duration-300"
+                                       onclick="return confirm('Are you sure you want to delete this photo?')">
+                                        <i class="fas fa-trash text-sm"></i>
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="w-full h-64 flex items-center justify-center bg-gray-200">
+                                    <div class="text-center text-gallery-muted">
+                                        <i class="fas fa-image text-4xl mb-2"></i>
+                                        <p class="text-sm">No image available</p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-6 space-y-4">
+                            <div>
+                                <h2 class="text-xl font-medium text-gallery-dark mb-2 group-hover:text-gallery-accent transition-colors duration-300">
+                                    {{ photo.title }}
+                                </h2>
+                                <p class="text-gallery-muted text-sm leading-relaxed">
+                                    {{ photo.description }}
+                                </p>
+                            </div>
+
+                            <!-- Upload Info -->
+                            <div class="flex items-center justify-between text-xs text-gallery-muted border-t pt-4">
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-user"></i>
+                                    <span>{{ photo.user.username }}</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <span>{{ photo.uploaded_at|date:"M d, Y" }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Action Button -->
+                            <div class="pt-4 border-t">
+                                <a href="{% url 'delete_photo' photo.id %}" 
+                                   class="w-full inline-flex items-center justify-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 text-sm font-medium"
+                                   onclick="return confirm('Are you sure you want to delete this photo?')">
+                                    <i class="fas fa-trash mr-2"></i>
+                                    Delete Photo
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <!-- Empty State -->
+            <div class="text-center py-20">
+                <div class="max-w-md mx-auto">
+                    <div class="w-24 h-24 mx-auto mb-8 bg-gray-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-images text-3xl text-gallery-muted"></i>
+                    </div>
+                    <h3 class="text-2xl font-light text-gallery-dark mb-4">
+                        Your Private Gallery is Empty
+                    </h3>
+                    <p class="text-gallery-muted mb-8 leading-relaxed">
+                        Start building your personal collection by uploading your first photo. 
+                        Create memories that are exclusively yours to manage and organize.
+                    </p>
+                    <a href="{% url 'upload_photo' %}" 
+                       class="inline-flex items-center px-8 py-3 bg-gallery-accent hover:bg-yellow-600 text-white rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl">
+                        <i class="fas fa-cloud-upload-alt mr-2"></i>
+                        Upload Your First Photo
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+
+        <!-- Gallery Statistics -->
+        {% if photos %}
+            <div class="mt-16 text-center">
+                <div class="inline-flex items-center space-x-8 bg-white rounded-full px-8 py-4 shadow-lg">
+                    <div class="text-center">
+                        <div class="text-2xl font-light text-gallery-dark">{{ photos|length }}</div>
+                        <div class="text-xs text-gallery-muted uppercase tracking-wider">
+                            {% if photos|length == 1 %}Photo{% else %}Photos{% endif %}
+                        </div>
+                    </div>
+                    <div class="w-px h-8 bg-gray-200"></div>
+                    <div class="text-center">
+                        <div class="text-2xl font-light text-gallery-dark">Private</div>
+                        <div class="text-xs text-gallery-muted uppercase tracking-wider">Collection</div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endblock %}
+
+</body>
+</html>
