@@ -34,9 +34,12 @@ The experience is inspired by a museum:
 ## 📸 Screenshots (Demo)  
 > *(Add screenshots of your project here once you run it, e.g. upload page, gallery page, comments section)*  
 
+## 📸 Screenshots (Demo)  
+
 | Upload Page | Gallery Page | Dashboard |
-|-------------|--------------|----------|
-| ![upload](https://drive.google.com/file/d/1M_8VKB_gjL28HlIDFav-HNAunHfk5Jjw/view?usp=sharing) | ![gallery]([docs/screenshots/gallery.png](https://drive.google.com/file/d/1ESSbADvcy0XLkQMPObuVgGiR0uSnzmWU/view?usp=sharing)) | ![Dashboard](https://drive.google.com/file/d/1xDRRGbz6GfUp0OMG4SxaPYzxL27In5hZ/view?usp=sharing) |
+|-------------|--------------|-----------|
+| ![Upload](https://drive.google.com/uc?export=view&id=1M_8VKB_gjL28HlIDFav-HNAunHfk5Jjw) | ![Gallery](https://drive.google.com/uc?export=view&id=1ESSbADvcy0XLkQMPObuVgGiR0uSnzmWU) | ![Dashboard](https://drive.google.com/uc?export=view&id=1xDRRGbz6GfUp0OMG4SxaPYzxL27In5hZ) |
+
 
 ---
 
