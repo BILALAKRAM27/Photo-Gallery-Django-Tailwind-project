@@ -34,9 +34,9 @@ The experience is inspired by a museum:
 ## 📸 Screenshots (Demo)  
 > *(Add screenshots of your project here once you run it, e.g. upload page, gallery page, comments section)*  
 
-| Upload Page | Gallery Page | Comments |
+| Upload Page | Gallery Page | Dashboard |
 |-------------|--------------|----------|
-| ![upload](docs/screenshots/upload.png) | ![gallery](docs/screenshots/gallery.png) | ![comments](docs/screenshots/comments.png) |
+| ![upload](https://drive.google.com/file/d/1M_8VKB_gjL28HlIDFav-HNAunHfk5Jjw/view?usp=sharing) | ![gallery]([docs/screenshots/gallery.png](https://drive.google.com/file/d/1ESSbADvcy0XLkQMPObuVgGiR0uSnzmWU/view?usp=sharing)) | ![Dashboard](https://drive.google.com/file/d/1xDRRGbz6GfUp0OMG4SxaPYzxL27In5hZ/view?usp=sharing) |
 
 ---
 
@@ -126,5 +126,3 @@ Contributions are welcome!
 ### 💡 Inspiration
 
 > *"Just like in a museum, every picture tells a story. Some are shared with the world, some remain personal treasures."*
-
-```
